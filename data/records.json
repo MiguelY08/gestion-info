@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "email": "juan@email.com",
+    "productos": [
+      {
+        "nombre": "Laptop",
+        "cantidad": 1,
+        "precio": 1200.0
+      },
+      {
+        "nombre": "Mouse",
+        "cantidad": 2,
+        "precio": 25.5
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "María García",
+    "email": "maria@email.com",
+    "productos": [
+      {
+        "nombre": "Monitor",
+        "cantidad": 1,
+        "precio": 350.0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "nombre": "Carlos López",
+    "email": "carlos@email.com",
+    "productos": [
+      {
+        "nombre": "Teclado",
+        "cantidad": 1,
+        "precio": 75.0
+      },
+      {
+        "nombre": "Pantalla",
+        "cantidad": 2,
+        "precio": 200.0
+      }
+    ]
+  }
+]
