@@ -145,3 +145,166 @@ class ClientService:
             'productos': total_products,
             'ingresos_totales': total_revenue
         }
+    
+    def new_register(self, client_id, name, email):
+        """
+        Crea un nuevo registro de cliente.
+        Retorna True si exitoso, False si error.
+        """
+        try:
+            # Validar campos
+            validate_id(client_id)
+            validate_name(name)
+            validate_email(email)
+            
+            # Verificar duplicados
+            if client_id in self.client_ids:
+                raise ValueError(f"ID {client_id} ya existe")
+            if email in self.emails:
+                raise ValueError(f"Email {email} ya está registrado")
+            
+            # Crear cliente
+            client = {
+                'id': client_id,
+                'nombre': name,
+                'email': email,
+                'productos': []
+            }
+            
+            # Añadir a memoria
+            self.clients.append(client)
+            self.client_ids.add(client_id)
+            self.emails.add(email)
+            
+            # Guardar a archivo
+            save_data(self.filepath, self.clients)
+            print(f"✅ Registro creado: {name} (ID: {client_id})")
+            return True
+        
+        except ValueError as e:
+            print(f"❌ Error de validación: {e}")
+            return False
+        except Exception as e:
+            print(f"❌ Error inesperado: {e}")
+            return False
+    
+    def list_records(self):
+        """Lista todos los registros ordenados por nombre usando lambda"""
+        if not self.clients:
+            print("📭 No hay registros")
+            return
+        
+        # Ordenar por nombre usando lambda
+        sorted_clients = sorted(self.clients, key=lambda c: c['nombre'])
+        
+        print(f"\n{'='*60}")
+        print(f"📋 REGISTROS ({len(sorted_clients)})")
+        print(f"{'='*60}")
+        
+        for client in sorted_clients:
+            print(f"\n🧑 ID: {client['id']} | {client['nombre']}")
+            print(f"   📧 Email: {client['email']}")
+            if client['productos']:
+                print(f"   📦 Productos: {len(client['productos'])}")
+            else:
+                print("   📦 Sin productos")
+    
+    def search_record(self, client_id):
+        """Busca registro por ID usando list comprehension"""
+        try:
+            validate_id(client_id)
+            
+            # Usar list comprehension para encontrar el cliente
+            found_clients = [c for c in self.clients if c['id'] == client_id]
+            
+            if not found_clients:
+                print(f"❌ Registro con ID {client_id} no encontrado")
+                return None
+            
+            client = found_clients[0]
+            print(f"✅ Registro encontrado:")
+            print(f"   🧑 ID: {client['id']} | {client['nombre']}")
+            print(f"   📧 Email: {client['email']}")
+            if client['productos']:
+                print(f"   📦 Productos ({len(client['productos'])})")
+                for prod in client['productos']:
+                    total = prod['cantidad'] * prod['precio']
+                    print(f"      • {prod['nombre']}: {prod['cantidad']}x ${prod['precio']:.2f} (Total: ${total:.2f})")
+            else:
+                print("   📦 Sin productos")
+            return client
+        
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            return None
+    
+    def update_record(self, client_id, name=None, email=None):
+        """
+        Actualiza registro por ID.
+        Solo actualiza campos proporcionados.
+        """
+        try:
+            validate_id(client_id)
+            
+            client = self._find_client_by_id(client_id)
+            if not client:
+                raise ValueError(f"Registro con ID {client_id} no existe")
+            
+            updated = False
+            
+            if name is not None:
+                validate_name(name)
+                client['nombre'] = name
+                updated = True
+            
+            if email is not None:
+                validate_email(email)
+                # Verificar si email ya existe en otro cliente
+                if email != client['email'] and email in self.emails:
+                    raise ValueError(f"Email {email} ya está registrado")
+                if email != client['email']:
+                    self.emails.remove(client['email'])
+                    self.emails.add(email)
+                    client['email'] = email
+                    updated = True
+            
+            if updated:
+                save_data(self.filepath, self.clients)
+                print(f"✅ Registro {client_id} actualizado")
+                return True
+            else:
+                print(f"ℹ️  No se realizaron cambios en registro {client_id}")
+                return True
+        
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            return False
+        except Exception as e:
+            print(f"❌ Error inesperado: {e}")
+            return False
+    
+    def delete_record(self, client_id):
+        """Elimina registro por ID"""
+        try:
+            validate_id(client_id)
+            
+            client = self._find_client_by_id(client_id)
+            if not client:
+                raise ValueError(f"Registro con ID {client_id} no existe")
+            
+            # Remover de memoria
+            self.clients.remove(client)
+            self.client_ids.remove(client_id)
+            self.emails.remove(client['email'])
+            
+            # Guardar cambios
+            save_data(self.filepath, self.clients)
+            print(f"✅ Registro {client_id} ({client['nombre']}) eliminado")
+            return True
+        
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            return False
+        except Exception as e:
+            print(f"❌ Error inesperado: {e}")
+            return False
