@@ -31,6 +31,7 @@ class MenuInteractivo:
         print(Fore.GREEN + "4" + Style.RESET_ALL + ".   Editar registro")
         print(Fore.GREEN + "5" + Style.RESET_ALL + ".   Eliminar registro")
         print(Fore.GREEN + "6" + Style.RESET_ALL + ".  Ver estadísticas")
+        print(Fore.GREEN + "7" + Style.RESET_ALL + ".  Exportar registros a CSV")
         print(Fore.RED + "0" + Style.RESET_ALL + ".  Salir")
         print(Fore.CYAN + "-"*60 + Style.RESET_ALL)
     
@@ -200,7 +201,26 @@ class MenuInteractivo:
         print(f"   {Fore.CYAN} Productos totales: {Fore.GREEN}{stats['productos']}")
         print(f"   {Fore.CYAN} Ingresos totales: {Fore.GREEN}${stats['ingresos_totales']:.2f}")
         print(Fore.CYAN + "="*60 + Style.RESET_ALL)
-    
+
+    def exportar_registros_csv(self):
+        """Opción: Exportar registros a CSV usando pandas."""
+        print("\n" + Fore.YELLOW + " EXPORTAR REGISTROS A CSV" + Style.RESET_ALL)
+        default_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'clientes_reporte.csv')
+        filepath = input(
+            Fore.MAGENTA + f"Ruta del archivo CSV [Enter para usar '{default_path}']: " + Style.RESET_ALL
+        ).strip()
+        if not filepath:
+            filepath = default_path
+
+        sort_by = input(
+            Fore.MAGENTA + "Ordenar por (id/nombre/email) [nombre]: " + Style.RESET_ALL
+        ).strip().lower() or 'nombre'
+        if sort_by not in ['id', 'nombre', 'email']:
+            sort_by = 'nombre'
+
+        if self.service.export_records_to_csv(filepath, sort_by=sort_by, ascending=True):
+            print(Fore.GREEN + f"Reporte CSV generado en: {filepath}" + Style.RESET_ALL)
+
     def ejecutar(self):
         """Bucle principal del menú"""
         self.mostrar_titulo()
@@ -222,10 +242,12 @@ class MenuInteractivo:
                     self.eliminar_registro()
                 elif opcion == 6:
                     self.mostrar_estadisticas()
+                elif opcion == 7:
+                    self.exportar_registros_csv()
                 elif opcion == 0:
                     self.salir()
                 else:
-                    print(Fore.RED + "❌ Opción no válida. Ingrese 0-6" + Style.RESET_ALL)
+                    print(Fore.RED + "❌ Opción no válida. Ingrese 0-7" + Style.RESET_ALL)
                 
                 # Pausa para lectura
                 if self.ejecutando:  # Solo mostrar si no estamos saliendo

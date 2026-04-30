@@ -5,6 +5,7 @@ from validate import (
     validate_product_name, validate_quantity, validate_price
 )
 from file import load_data, save_data
+from integration import create_client_record, export_clients_to_csv
 
 
 class ClientService:
@@ -186,6 +187,25 @@ class ClientService:
             return False
         except Exception as e:
             print(f"❌ Error inesperado: {e}")
+            return False
+
+    def create_client_with_kwargs(self, *args, **kwargs):
+        """Crea un cliente usando una función genérica con *args y **kwargs."""
+        client = create_client_record(*args, **kwargs)
+        return self.add_client(
+            client_id=client['id'],
+            name=client['nombre'],
+            email=client['email'],
+            products=client['productos']
+        )
+
+    def export_records_to_csv(self, filepath=None, **kwargs):
+        """Exporta registros a CSV usando pandas y opciones de DataFrame."""
+        try:
+            export_clients_to_csv(self.clients, filepath, **kwargs)
+            return True
+        except Exception as e:
+            print(f"Error al exportar CSV: {e}")
             return False
     
     def list_records(self):

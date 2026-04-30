@@ -10,6 +10,7 @@ proyecto/
 │   ├── validate.py      # Validaciones de campos
 │   ├── service.py       # Lógica + persistencia
 │   ├── file.py          # Manejo de archivos JSON
+│   ├── integration.py   # Exportación de datos con pandas
 │   └── main.py          # Programa principal
 ├── data/
 │   └── records.json     # Archivo de datos (creado automáticamente)
@@ -49,13 +50,12 @@ Clase `ClientService` que gestiona:
 
 ### main.py
 
-Programa de demostración que:
+Programa principal interactivo que:
 
-- Crea 3 clientes
-- Intenta agregar duplicados (falla correctamente)
-- Agrega productos
-- Lista todos los registros
-- Muestra estadísticas
+- Inicia el menú de gestión de clientes
+- Permite crear, listar, buscar, editar y eliminar registros
+- Incluye exportación a CSV con pandas
+- Muestra estadísticas del sistema
 
 ## ✅ Características
 
@@ -70,9 +70,18 @@ Programa de demostración que:
 ## 🚀 Uso
 
 ```bash
-# Ejecutar la demostración
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Ejecutar la aplicación
 python src/main.py
 ```
+
+## 📌 Nueva característica
+
+- Opción del menú: `7. Exportar registros a CSV`
+- Genera un archivo en `data/clientes_reporte.csv` por defecto
+- Usa `pandas` para convertir los registros en un `DataFrame` y ordenar los datos
 
 ## 📊 Estructura de Datos
 

@@ -16,7 +16,7 @@ def main():
     menu = MenuInteractivo(service)
     menu.ejecutar()
     
-    print("\n💾 Datos guardados automáticamente en: " + data_file)
+    print("\n Datos guardados automáticamente en: " + data_file)
     print("="*60 + "\n")
 
 
